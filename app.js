@@ -34,7 +34,7 @@ app.post('/webhook/pix*', (req, res) => {
 });
 
 app.post('/get-pix', async(req, res) => {
-  console.log(req.body)
+  // console.log(req.body)
   const information = await getPix(req.body);
   res.send({ ok: true, information });
 });
