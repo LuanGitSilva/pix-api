@@ -16,8 +16,8 @@ app.post('/create-order', async(req, res) => {
   res.send({ ok: true, qrcode, cobranca });
 });
 
-app.post("/webhook", (request, response) => {
-  if (request.socket.authorized) { 
+app.post("/webhook", (req, res) => {
+  if (req.socket.authorized) { 
     response.status(200).end();
   } else {
     response.status(401).end();
@@ -27,7 +27,7 @@ app.post("/webhook", (request, response) => {
 app.post('/webhook/pix*', (req, res) => {
   console.log('webhook received');
   const { pix } = req.body;
-  if (!request.client.authorized) { 
+  if (!req.client.authorized) { 
     return res.status(401).send('Invalid client certification.');
   }
   res.send({ ok: true, pix });
