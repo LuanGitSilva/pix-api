@@ -1,0 +1,3 @@
+Atualizei no digital ocean para ficar rodando sozinho com os passos:
+1 - instalei e configurei o pm2
+2 - instalei e configurei nginx como servidor proxy reverso
