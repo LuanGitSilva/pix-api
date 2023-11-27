@@ -18,9 +18,9 @@ app.post('/create-order', async(req, res) => {
 
 app.post("/webhook", (req, res) => {
   if (req.socket.authorized) { 
-    response.status(200).end();
+    res.status(200).end();
   } else {
-    response.status(401).end();
+    res.status(401).end();
   }
 });
 
