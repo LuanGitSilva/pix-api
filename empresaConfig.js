@@ -1,15 +1,15 @@
-import { PrismaClient } from '@prisma/client';
+const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 const getConfigById = async () => {
   try {
-    return await prisma.tenant.findMany();
+    return await prisma.tenants.findMany();
   } catch (error) {
     console.error('Erro ao obter configurações das empresas:', error);
     throw error;
   }
 }
 
-export default {
+module.exports = {
   getConfigById
 };
