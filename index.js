@@ -1,11 +1,11 @@
 require('dotenv').config({ path: './.env.producao' });
 
-// const https = require('https');
-// const fs = require('fs');
-// const app = require('./app');
-// const { createWebhook } = require('./lib/pix');
-// const { getConfigById } = require('./empresaConfig');
-// const remoteCertURL = 'https://pix.gerencianet.com.br/webhooks/chain-pix-prod.crt';
+const https = require('https');
+const fs = require('fs');
+const app = require('./app');
+const { createWebhook } = require('./lib/pix');
+const { getConfigById } = require('./empresaConfig');
+const remoteCertURL = 'https://pix.gerencianet.com.br/webhooks/chain-pix-prod.crt';
 
 // // Função para baixar o certificado remoto
 // function downloadRemoteCertificate(remoteURL, callback) {
