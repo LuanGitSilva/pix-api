@@ -4,7 +4,7 @@ const https = require('https');
 const fs = require('fs');
 const app = require('./app');
 const { createWebhook } = require('./lib/pix');
-const { getConfigById } = require('./empresaConfig');
+const { getConfigById } = require('./empresaConfig').default;
 const remoteCertURL = 'https://pix.gerencianet.com.br/webhooks/chain-pix-prod.crt';
 
 // Função para baixar o certificado remoto

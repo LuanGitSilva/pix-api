@@ -1,4 +1,4 @@
-const { PrismaClient } = require('@prisma/client');
+import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 const getConfigById = async () => {
@@ -10,6 +10,6 @@ const getConfigById = async () => {
   }
 }
 
-module.exports = {
+export default {
   getConfigById
 };
