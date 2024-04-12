@@ -10,7 +10,6 @@ app.get('/', (req, res) => {
   res.send({ ok: true });
 })
 app.post('/create-order', async(req, res) => {
-  console.log(req.body)
   const pixCharge = await createPixCharge(req.body);
   const { qrcode, cobranca } = pixCharge;
   res.send({ ok: true, qrcode, cobranca });
@@ -25,7 +24,6 @@ app.post("/webhook", (req, res) => {
 });
 
 app.post('/webhook/pix*', (req, res) => {
-  console.log('webhook received');
   const { pix } = req.body;
   if (!req.client.authorized) { 
     return res.status(401).send('Invalid client certification.');
@@ -34,7 +32,6 @@ app.post('/webhook/pix*', (req, res) => {
 });
 
 app.post('/get-pix', async(req, res) => {
-  // console.log(req.body)
   const information = await getPix(req.body);
   res.send({ ok: true, information });
 });

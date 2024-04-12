@@ -1,10 +1,10 @@
 require('dotenv').config({ path: './.env.producao' });
-console.log('console.log aqui',process.env.GN_ENV);
 
 const https = require('https');
 const fs = require('fs');
 const app = require('./app');
 const { createWebhook } = require('./lib/pix');
+const { getConfigById } = require('./empresaConfig');
 const remoteCertURL = 'https://pix.gerencianet.com.br/webhooks/chain-pix-prod.crt';
 
 // Função para baixar o certificado remoto
@@ -50,10 +50,18 @@ downloadRemoteCertificate(remoteCertURL, (error, certData) => {
 
   const server = https.createServer(options, app);
   server.listen(443, async () => {
-    createWebhook().then(() => {
+    const tenants = await getConfigById();
+    createWebhook(tenants).then(() => {
       console.log('Webhook criado com sucesso.');
     }).catch((err) => {
       console.error('Erro ao criar webhook:', err);
     });
   });
 });
+
+// const pegar = async () => {
+//   const tenants = await getConfigById();
+//   return tenants;
+// }
+
+// pegar().then(result => console.log(result)).catch(error => console.error(error));
