@@ -52,7 +52,7 @@ downloadRemoteCertificate(remoteCertURL, (error, certData) => {
   server.listen(443, async () => {
     const tenants = await getConfigById();
     createWebhook(tenants).then((result) => {
-      console.log('Webhook criado com sucesso.', result);
+      console.log(result);
     }).catch((err) => {
       console.error('Erro ao criar webhook:', err);
     });
