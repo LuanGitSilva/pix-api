@@ -7,99 +7,191 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model additionals {
-  id           Int        @id @default(autoincrement())
-  tenantId     Int
-  categoryId   Int
-  categoryName String
-  type         String
-  itens        String
-  price1       Int
-  price2       Int?
-  price3       Int?
-  price4       Int?
-  unique       String?
-  categories   categories @relation(fields: [categoryId], references: [id])
+model Banner {
+  id          Int               @id @default(autoincrement())
+  tenantId    Int
+  image       String
+
+  tenant   Tenant   @relation(fields: [tenantId], references: [id])
+
+  @@map("banners")
 }
 
-model banners {
-  id       Int     @id @default(autoincrement())
-  tenantId Int
-  image    String
-  tenants  tenants @relation(fields: [tenantId], references: [id])
+model Tenant {
+  id             Int               @id @default(autoincrement())
+  slug           String            @unique
+  logo           String
+  storeImg       String?
+  open           String
+  address        String
+  close          String
+  minimumTime    Int?
+  maximumTime    Int?
+  status         String
+  name           String
+  mainColor      String
+  email          String            @unique
+  password       String 
+  contact        String
+  cnpj           String            @unique
+  gnClientId     String?
+  gnClientSecret String?
+  gnCertificado  String?
+  chavePix       String?
+  myuser            Int?
+  banners        Banner[]
+  products       Product[]
+  neighborhoods  Neighborhood[]
+  orders         Order[]
+  orderstable    OrderTable[]
+  tenantuser     TenantUser[]
+
+  @@map("tenants")
 }
 
-model categories {
-  id           Int           @id @default(autoincrement())
-  tenantId     Int
-  name         String
-  flavorsSize1 Int?
-  flavorsSize2 Int?
-  flavorsSize3 Int?
-  flavorsSize4 Int?
-  additionals  additionals[]
-  products     products[]
+model TenantUser {
+  id             Int               @id @default(autoincrement())
+  tenantId       Int
+  level          Int
+  position       String
+  name           String            
+  email 		     String            @unique
+  password 	     String            @unique
+
+  tenant   Tenant   @relation(fields: [tenantId], references: [id])
+
+  @@map("tenantusers")
 }
 
-model combos {
-  id                Int     @id @default(autoincrement())
+model Product {
+  id                Int            @id @default(autoincrement())
   tenantId          Int
-  name              String  @unique
-  price             Float
-  quantityProducts  Int
-  flavorsProduct1   Int?
-  flavorsProduct2   Int?
-  flavorsProduct3   Int?
-  flavorsProduct4   Int?
-  flavorsProduct5   Int?
-  additional1       String?
-  additional2       String?
-  additional3       String?
-  additional4       String?
-  additional5       String?
-  selectedProducts1 String
-  selectedProducts2 String
-  selectedProducts3 String?
-  selectedProducts4 String?
-  selectedProducts5 String?
-  sizeProducts1     String
-  sizeProducts2     String
-  sizeProducts3     String?
-  sizeProducts4     String?
-  sizeProducts5     String?
+  categoryId        Int
+  categoryName      String
+  name              String
   image             String
-  description       String
-  categoryId        Int?
-  categoryName      String?
+  price1            Float
+  price2            Float?
+  price3            Float?
+  price4            Float?
+  oldprice1         Float?
+  oldprice2         Float?
+  oldprice3         Float?
+  oldprice4         Float?
+  sizeName1         String
+  sizeName2         String?
+  sizeName3         String?
+  sizeName4         String?
+  description       String?
   disposition       String?
+  productOrder      ProductOrder[]
+  productOrderTable ProductOrderTable[]
+
+  tenant   Tenant   @relation(fields: [tenantId], references: [id])
+  category Category @relation(fields: [categoryId], references: [id])
+
+  @@map("products")
 }
 
-model cupoms {
-  id              Int     @id @default(autoincrement())
+model ProductStock {
+  id              Int            @id @default(autoincrement())
   tenantId        Int
-  name            String  @unique
-  price           Float
-  quantityTotal   Int?
-  quantityUsefull Int?
-  initialDate     String?
-  finalDate       String?
+  name            String         @unique
+  cod             String?
+  measure         String
+  quantity        Int
+  validity        String
+  minimumQuantity Int?
+
+  @@map("productsstock")
 }
 
-model neighborhoods {
-  id                Int                 @id @default(autoincrement())
+model Additional {
+  id              Int            @id @default(autoincrement())
+  tenantId        Int
+  categoryId      Int
+  categoryName    String
+  type            String
+  itens           String
+  price1          Int
+  price2          Int?
+  price3          Int?
+  price4          Int?
+  unique          String?
+
+  category  Category  @relation(fields: [categoryId], references: [id])
+
+  @@map("additionals")
+}
+
+model Category {
+  id            Int            @id @default(autoincrement())
+  tenantId      Int
+  name          String
+  flavorsSize1  Int?
+  flavorsSize2  Int?
+  flavorsSize3  Int?
+  flavorsSize4  Int?
+  similar       String?
+  products      Product[]
+  additonal     Additional[]
+
+  @@map("categories")
+}
+
+model User {
+  id              Int            @id @default(autoincrement())
+  name            String
+  cpf             String         @unique
+  contact         String
+  email           String         @unique
+  password        String
+  shippingAddress ShippingAddress[]
+  order           Order[]
+
+  @@map("users")
+}
+
+model ShippingAddress {
+  id             Int             @id @default(autoincrement())
+  userId         Int
+  street         String
+  number         String?
+  cep            String?
+  neighborhoodId Int
+  neighborhoodName String
+  city           String
+  state          String
+  complement     String?
+  order          Order[]
+
+  user    User   @relation(fields: [userId], references: [id])
+  neighbor  Neighborhood  @relation(fields: [neighborhoodId], references: [id])
+
+
+  @@map("shippingaddresses")
+}
+
+model Neighborhood {
+  id                Int             @id @default(autoincrement())
   tenantId          Int
   name              String
   price             Float
-  tenants           tenants             @relation(fields: [tenantId], references: [id])
-  shippingaddresses shippingaddresses[]
+  shippingAddress   ShippingAddress[]
+
+  tenant   Tenant   @relation(fields: [tenantId], references: [id])
+
+  @@map("neighborhoods")
 }
 
-model orders {
-  id                  Int               @id @default(autoincrement())
+model Order {
+  id                  Int             @id @default(autoincrement())
   userId              Int
   tenantId            Int
   addressId           Int
-  paymentType         String
+  remove              String?
+  pdv                 String?
+  paymentType         String 
   paymentChange       Float?
   shippingPrice       Float?
   subtotal            Float
@@ -111,128 +203,21 @@ model orders {
   cupomDiscount       Int?
   canceledObservation String?
   maximumTime         String?
-  remove              String?
-  pdv                 String?
+  pdvClientName       String?
   pdvClientContact    String?
   pdvClientCpf        String?
-  pdvClientName       String?
   motoboy             Int?
-  shippingaddresses   shippingaddresses @relation(fields: [addressId], references: [id])
-  tenants             tenants           @relation(fields: [tenantId], references: [id])
-  users               users             @relation(fields: [userId], references: [id])
-  productorders       productorders[]
+  productOrder        ProductOrder[]
+
+  tenant   Tenant   @relation(fields: [tenantId], references: [id])
+  user  User   @relation(fields: [userId], references: [id])
+  shippingAddress  ShippingAddress   @relation(fields: [addressId], references: [id])
+
+  @@map("orders")
 }
 
-model orderstable {
-  id                  Int                  @id @default(autoincrement())
-  tenantId            Int
-  table               Int
-  paymentType         String
-  paymentChange       Float?
-  subtotal            Float
-  orderDate           String
-  status              String
-  total               Float
-  observation         String?
-  cupom               String?
-  cupomDiscount       Int?
-  canceledObservation String?
-  tenants             tenants              @relation(fields: [tenantId], references: [id])
-  productorderstable  productorderstable[]
-}
-
-model productorders {
-  id                   Int      @id @default(autoincrement())
-  orderId              Int
-  productId            Int
-  productName          String
-  productPrice         Float
-  productSize          String
-  otherProductId       Int?
-  otherProductName     String?
-  additionalId         Int?
-  additionalName       String?
-  quantity             Int
-  category             String?
-  otherProductId2      Int?
-  otherProductId3      Int?
-  otherProductName2    String?
-  otherProductName3    String?
-  additionalId10       Int?
-  additionalId2        Int?
-  additionalId3        Int?
-  additionalId4        Int?
-  additionalId5        Int?
-  additionalId6        Int?
-  additionalId7        Int?
-  additionalId8        Int?
-  additionalId9        Int?
-  additionalName10     String?
-  additionalName2      String?
-  additionalName3      String?
-  additionalName4      String?
-  additionalName5      String?
-  additionalName6      String?
-  additionalName7      String?
-  additionalName8      String?
-  additionalName9      String?
-  comboAdditionals1_1  Int?
-  comboAdditionals1_10 Int?
-  comboAdditionals1_2  Int?
-  comboAdditionals1_3  Int?
-  comboAdditionals1_4  Int?
-  comboAdditionals1_5  Int?
-  comboAdditionals1_6  Int?
-  comboAdditionals1_7  Int?
-  comboAdditionals1_8  Int?
-  comboAdditionals1_9  Int?
-  comboAdditionals2_1  Int?
-  comboAdditionals2_10 Int?
-  comboAdditionals2_2  Int?
-  comboAdditionals2_3  Int?
-  comboAdditionals2_4  Int?
-  comboAdditionals2_5  Int?
-  comboAdditionals2_6  Int?
-  comboAdditionals2_7  Int?
-  comboAdditionals2_8  Int?
-  comboAdditionals2_9  Int?
-  comboAdditionals3_1  Int?
-  comboAdditionals3_10 Int?
-  comboAdditionals3_2  Int?
-  comboAdditionals3_3  Int?
-  comboAdditionals3_4  Int?
-  comboAdditionals3_5  Int?
-  comboAdditionals3_6  Int?
-  comboAdditionals3_7  Int?
-  comboAdditionals3_8  Int?
-  comboAdditionals3_9  Int?
-  comboAdditionals4_1  Int?
-  comboAdditionals4_10 Int?
-  comboAdditionals4_2  Int?
-  comboAdditionals4_3  Int?
-  comboAdditionals4_4  Int?
-  comboAdditionals4_5  Int?
-  comboAdditionals4_6  Int?
-  comboAdditionals4_7  Int?
-  comboAdditionals4_8  Int?
-  comboAdditionals4_9  Int?
-  comboAdditionals5_1  Int?
-  comboAdditionals5_10 Int?
-  comboAdditionals5_2  Int?
-  comboAdditionals5_3  Int?
-  comboAdditionals5_4  Int?
-  comboAdditionals5_5  Int?
-  comboAdditionals5_6  Int?
-  comboAdditionals5_7  Int?
-  comboAdditionals5_8  Int?
-  comboAdditionals5_9  Int?
-  comboId              Int?
-  orders               orders   @relation(fields: [orderId], references: [id])
-  products             products @relation(fields: [productId], references: [id])
-}
-
-model productorderstable {
-  id                Int         @id @default(autoincrement())
+model ProductOrder {
+  id                Int     @id @default(autoincrement())
   orderId           Int
   productId         Int
   productName       String
@@ -240,138 +225,197 @@ model productorderstable {
   productSize       String
   otherProductId    Int?
   otherProductName  String?
+  otherProductId2   Int?
+  otherProductName2 String?
+  otherProductId3   Int?
+  otherProductName3 String?
   additionalId      Int?
   additionalName    String?
+  additionalId2      Int?
+  additionalName2    String?
+  additionalId3      Int?
+  additionalName3    String?
+  additionalId4      Int?
+  additionalName4    String?
+  additionalId5      Int?
+  additionalName5    String?
+  additionalId6      Int?
+  additionalName6    String?
+  additionalId7      Int?
+  additionalName7    String?
+  additionalId8      Int?
+  additionalName8    String?
+  additionalId9      Int?
+  additionalName9    String?
+  additionalId10      Int?
+  additionalName10    String?
+  quantity          Int
+  category          String? 
+  comboId           Int?
+  comboAdditionals1_1 Int?
+  comboAdditionals1_2 Int?
+  comboAdditionals1_3 Int?
+  comboAdditionals1_4 Int?
+  comboAdditionals1_5 Int?
+  comboAdditionals1_6 Int?
+  comboAdditionals1_7 Int?
+  comboAdditionals1_8 Int?
+  comboAdditionals1_9 Int?
+  comboAdditionals1_10 Int?
+  comboAdditionals2_1 Int?
+  comboAdditionals2_2 Int?
+  comboAdditionals2_3 Int?
+  comboAdditionals2_4 Int?
+  comboAdditionals2_5 Int?
+  comboAdditionals2_6 Int?
+  comboAdditionals2_7 Int?
+  comboAdditionals2_8 Int?
+  comboAdditionals2_9 Int?
+  comboAdditionals2_10 Int?
+  comboAdditionals3_1 Int?
+  comboAdditionals3_2 Int?
+  comboAdditionals3_3 Int?
+  comboAdditionals3_4 Int?
+  comboAdditionals3_5 Int?
+  comboAdditionals3_6 Int?
+  comboAdditionals3_7 Int?
+  comboAdditionals3_8 Int?
+  comboAdditionals3_9 Int?
+  comboAdditionals3_10 Int?
+  comboAdditionals4_1 Int?
+  comboAdditionals4_2 Int?
+  comboAdditionals4_3 Int?
+  comboAdditionals4_4 Int?
+  comboAdditionals4_5 Int?
+  comboAdditionals4_6 Int?
+  comboAdditionals4_7 Int?
+  comboAdditionals4_8 Int?
+  comboAdditionals4_9 Int?
+  comboAdditionals4_10 Int?
+  comboAdditionals5_1 Int?
+  comboAdditionals5_2 Int?
+  comboAdditionals5_3 Int?
+  comboAdditionals5_4 Int?
+  comboAdditionals5_5 Int?
+  comboAdditionals5_6 Int?
+  comboAdditionals5_7 Int?
+  comboAdditionals5_8 Int?
+  comboAdditionals5_9 Int?
+  comboAdditionals5_10 Int?
+
+  product Product @relation(fields: [productId], references: [id])
+  order   Order   @relation(fields: [orderId], references: [id])
+
+  @@map("productorders")
+}
+
+model OrderTable {
+  id            Int             @id @default(autoincrement())
+  tenantId      Int
+  table         Int
+  paymentType   String
+  paymentChange Float?
+  subtotal      Float
+  orderDate     String
+  status        String
+  total         Float
+  observation   String?
+  cupom         String?
+  cupomDiscount Int?
+  canceledObservation String?
+  productOrderTable  ProductOrderTable[]
+
+  tenant   Tenant   @relation(fields: [tenantId], references: [id])
+
+  @@map("orderstable")
+}
+
+model ProductOrderTable {
+  id                Int     @id @default(autoincrement())
+  orderId           Int
+  productId         Int
+  productName       String
+  productPrice      Float
+  productSize       String
+  otherProductId    Int?
+  otherProductName  String?
+  otherProductId2   Int?
+  otherProductName2 String?
+  otherProductId3   Int?
+  otherProductName3 String?
+  additionalId      Int?
+  additionalName    String?
+  additionalId2      Int?
+  additionalName2    String?
+  additionalId3      Int?
+  additionalName3    String?
+  additionalId4      Int?
+  additionalName4    String?
+  additionalId5      Int?
+  additionalName5    String?
+  additionalId6      Int?
+  additionalName6    String?
+  additionalId7      Int?
+  additionalName7    String?
+  additionalId8      Int?
+  additionalName8    String?
+  additionalId9      Int?
+  additionalName9    String?
+  additionalId10      Int?
+  additionalName10    String?
   quantity          Int
   category          String?
-  otherProductId2   Int?
-  otherProductId3   Int?
-  otherProductName2 String?
-  otherProductName3 String?
-  additionalId10    Int?
-  additionalId2     Int?
-  additionalId3     Int?
-  additionalId4     Int?
-  additionalId5     Int?
-  additionalId6     Int?
-  additionalId7     Int?
-  additionalId8     Int?
-  additionalId9     Int?
-  additionalName10  String?
-  additionalName2   String?
-  additionalName3   String?
-  additionalName4   String?
-  additionalName5   String?
-  additionalName6   String?
-  additionalName7   String?
-  additionalName8   String?
-  additionalName9   String?
-  orderstable       orderstable @relation(fields: [orderId], references: [id])
-  products          products    @relation(fields: [productId], references: [id])
+
+  product Product @relation(fields: [productId], references: [id])
+  orderTable   OrderTable   @relation(fields: [orderId], references: [id])
+
+  @@map("productorderstable")
 }
 
-model products {
-  id                 Int                  @id @default(autoincrement())
+model Cupom {
+  id                Int     @id @default(autoincrement()) 
+  tenantId          Int
+  name              String  @unique
+  price             Float
+  quantityTotal     Int?
+  quantityUsefull   Int?
+  initialDate       String?
+  finalDate			    String?
+ 
+  @@map("cupoms")
+}
+
+model Combo {
+  id                 Int     @id @default(autoincrement()) 
   tenantId           Int
-  categoryId         Int
-  categoryName       String
-  name               String
+  name               String  @unique
+  price              Float
   image              String
-  price1             Float
-  price2             Float?
-  price3             Float?
-  price4             Float?
-  sizeName1          String
-  sizeName2          String?
-  sizeName3          String?
-  sizeName4          String?
-  description        String?
-  oldprice1          Float?
-  oldprice2          Float?
-  oldprice3          Float?
-  oldprice4          Float?
+  description        String
   disposition        String?
-  productorders      productorders[]
-  productorderstable productorderstable[]
-  categories         categories           @relation(fields: [categoryId], references: [id])
-  tenants            tenants              @relation(fields: [tenantId], references: [id])
-}
+  categoryId         Int?
+  categoryName       String?
+  quantityProducts   Int
+  selectedProducts1  String
+  selectedProducts2  String
+  selectedProducts3  String?
+  selectedProducts4  String?
+  selectedProducts5  String?
+  sizeProducts1      String
+  sizeProducts2      String
+  sizeProducts3      String?
+  sizeProducts4      String?
+  sizeProducts5      String?
+  flavorsProduct1    Int?
+  flavorsProduct2    Int?
+  flavorsProduct3    Int?
+  flavorsProduct4    Int?
+  flavorsProduct5    Int?
+  additional1        String?
+  additional2        String?
+  additional3        String?
+  additional4        String?
+  additional5        String?
 
-model productsstock {
-  id              Int     @id @default(autoincrement())
-  name            String  @unique
-  cod             String?
-  measure         String
-  quantity        Int
-  validity        String
-  tenantId        Int
-  minimumQuantity Int?
-}
-
-model shippingaddresses {
-  id               Int           @id @default(autoincrement())
-  userId           Int
-  street           String
-  number           String?
-  cep              String?
-  neighborhoodId   Int
-  neighborhoodName String
-  city             String
-  state            String
-  complement       String?
-  orders           orders[]
-  neighborhoods    neighborhoods @relation(fields: [neighborhoodId], references: [id])
-  users            users         @relation(fields: [userId], references: [id])
-}
-
-model tenants {
-  id             Int             @id @default(autoincrement())
-  slug           String          @unique
-  logo           String
-  open           String
-  address        String
-  close          String
-  status         String
-  name           String
-  mainColor      String
-  email          String          @unique
-  password       String
-  contact        String
-  cnpj           String          @unique
-  maximumTime    Int?
-  minimumTime    Int?
-  chavePix       String?
-  gnCertificado  String?
-  gnClientId     String?
-  gnClientSecret String?
-  storeImg       String?
-  myuser         Int?
-  banners        banners[]
-  neighborhoods  neighborhoods[]
-  orders         orders[]
-  orderstable    orderstable[]
-  products       products[]
-  tenantusers    tenantusers[]
-}
-
-model tenantusers {
-  id       Int     @id @default(autoincrement())
-  tenantId Int
-  level    Int
-  position String
-  name     String
-  email    String  @unique
-  password String  @unique
-  tenants  tenants @relation(fields: [tenantId], references: [id])
-}
-
-model users {
-  id                Int                 @id @default(autoincrement())
-  name              String
-  cpf               String              @unique
-  contact           String
-  email             String              @unique
-  password          String
-  orders            orders[]
-  shippingaddresses shippingaddresses[]
+  @@map("combos")
 }
