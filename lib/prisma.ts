@@ -6,7 +6,7 @@ declare global {
 
 const prisma = global.prisma || new PrismaClient();
 
-if(process.env.NODE_ENV !== 'production') {
+if(process.env.GN_ENV !== 'producao') {
     global.prisma = prisma;
 }
 
