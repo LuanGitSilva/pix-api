@@ -1,5 +1,4 @@
 require('dotenv').config({ path: './.env.producao' });
-console.log('console.log aqui',process.env.GN_ENV);
 
 const https = require('https');
 const fs = require('fs');
